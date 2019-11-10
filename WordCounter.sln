@@ -1,0 +1,56 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace MyExercises
+{
+    class Program
+    {
+        static void Main()
+        {
+            var dict = new Dictionary<string, int>();
+            var regex = new Regex(@"[A-z']+");
+            var matchWords = new List<string>();
+            using (var streamWords = new StreamReader(@"Resources\03. Word Count\words.txt"))
+            {
+                matchWords = streamWords.ReadToEnd().ToLower().Split().ToList();
+            }
+            using (var streamText = new StreamReader(@"Resources\03. Word Count\text.txt"))
+            {
+                while (true)
+                {
+                    var rawLine = streamText.ReadLine();
+                    if (rawLine==null)
+                    {
+                        break;
+                    }
+                    var line = rawLine.ToLower();
+                    var wordsOfLine = regex.Matches(line).ToArray();
+                    foreach (var word in wordsOfLine)
+                    {
+                        foreach (var matchWord in matchWords)
+                        {
+                            var wordString = word.ToString();
+                            if (matchWord == wordString)
+                            {
+                                if (!dict.ContainsKey(matchWord))
+                                {
+                                    dict[matchWord] = 0;
+                                }
+                                dict[matchWord]++;
+                            }
+                        }
+                    }
+
+                }
+            }
+            foreach (var kvp in dict)
+            {
+                Console.WriteLine($"{kvp.Key} - {kvp.Value}");
+            }
+        }
+    }
+}
